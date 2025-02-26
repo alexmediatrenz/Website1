@@ -1,0 +1,216 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  twitterHandle String?
+  birthDate     DateTime?
+  zodiacSign    String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts       Account[]
+  sessions       Session[]
+  quizResults    QuizResult[]
+  zodiacMatches  ZodiacMatch[]
+  datingMatches  DatingMatch[]
+  comments       Comment[]
+  subscriptions  Subscription?
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Quiz {
+  id          String       @id @default(cuid())
+  title       String
+  description String
+  type        String  // "personality", "enneagram", "attachment", etc.
+  category    String
+  imageUrl    String?
+  duration    Int     // Estimated time in minutes
+  published   Boolean @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  questions   Question[]
+  results     QuizResult[]
+}
+
+model Question {
+  id          String      @id @default(cuid())
+  quizId      String
+  text        String
+  imageUrl    String?
+  order       Int
+  type        String      // "multiple-choice", "slider", "image-select"
+  
+  quiz        Quiz        @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options     Option[]
+  answers     Answer[]
+}
+
+model Option {
+  id          String    @id @default(cuid())
+  questionId  String
+  text        String
+  imageUrl    String?
+  value       Int       // Score value for this option
+  
+  question    Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answers     Answer[]
+}
+
+model Answer {
+  id          String    @id @default(cuid())
+  resultId    String
+  questionId  String
+  optionId    String?
+  value       Int?      // For slider or custom value inputs
+  
+  result      QuizResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  question    Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  option      Option?    @relation(fields: [optionId], references: [id])
+}
+
+model QuizResult {
+  id          String    @id @default(cuid())
+  userId      String
+  quizId      String
+  score       Json      // Store complex scoring as JSON
+  primaryType String?   // Primary personality type or result
+  createdAt   DateTime  @default(now())
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quiz        Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  answers     Answer[]
+}
+
+model ZodiacSign {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  symbol      String
+  element     String
+  dateStart   String    // MM-DD format
+  dateEnd     String    // MM-DD format
+  traits      String[]
+  imageUrl    String?
+  description String    @db.Text
+  
+  matchesFrom ZodiacMatch[] @relation("FromSign")
+  matchesTo   ZodiacMatch[] @relation("ToSign")
+}
+
+model ZodiacMatch {
+  id          String    @id @default(cuid())
+  userId      String
+  fromSignId  String
+  toSignId    String
+  compatibility Int      // 1-100 scale
+  description String    @db.Text
+  createdAt   DateTime  @default(now())
+  
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fromSign    ZodiacSign @relation("FromSign", fields: [fromSignId], references: [id])
+  toSign      ZodiacSign @relation("ToSign", fields: [toSignId], references: [id])
+}
+
+model DatingMatch {
+  id          String    @id @default(cuid())
+  userId      String
+  characterName String
+  mediaSource String
+  compatibility Int      // 1-100 scale
+  description String    @db.Text
+  imageUrl    String?
+  createdAt   DateTime  @default(now())
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  excerpt     String
+  content     String    @db.Text
+  imageUrl    String?
+  category    String
+  tags        String[]
+  published   Boolean   @default(false)
+  authorId    String?
+  authorName  String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  comments    Comment[]
+}
+
+model Comment {
+  id          String    @id @default(cuid())
+  userId      String
+  postId      String
+  content     String    @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post        BlogPost  @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Subscription {
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  tier        String    // "free", "premium", "vip"
+  startDate   DateTime  @default(now())
+  endDate     DateTime?
+  active      Boolean   @default(true)
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

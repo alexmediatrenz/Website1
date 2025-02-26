@@ -1,0 +1,118 @@
+# Cosmic Personality Blog - Project Structure
+
+```
+cosmic-personality-blog/
+├── README.md
+├── .gitignore
+├── package.json
+├── package-lock.json
+├── .env.example
+├── .eslintrc.json
+├── next.config.js
+├── tsconfig.json
+├── public/
+│   ├── favicon.ico
+│   ├── logo.svg
+│   ├── images/
+│   │   ├── zodiac/
+│   │   ├── personality/
+│   │   └── dating/
+│   └── assets/
+│       ├── dart.svg
+│       └── zodiac-wheel.svg
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   ├── blog/
+│   │   │   ├── page.tsx
+│   │   │   └── [slug]/page.tsx
+│   │   ├── games/
+│   │   │   ├── page.tsx
+│   │   │   ├── personality-quiz/
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── [quizId]/page.tsx
+│   │   │   ├── zodiac-dart/
+│   │   │   │   └── page.tsx
+│   │   │   └── dating-game/
+│   │   │       └── page.tsx
+│   │   ├── profile/
+│   │   │   └── page.tsx
+│   │   └── api/
+│   │       ├── auth/[...nextauth]/route.ts
+│   │       ├── quiz/route.ts
+│   │       ├── zodiac/route.ts
+│   │       ├── dating-match/route.ts
+│   │       └── twitter/route.ts
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Header.tsx
+│   │   │   ├── Footer.tsx
+│   │   │   ├── Navbar.tsx
+│   │   │   ├── AuthButton.tsx
+│   │   │   ├── Card.tsx
+│   │   │   └── ThemeToggle.tsx
+│   │   ├── blog/
+│   │   │   ├── BlogCard.tsx
+│   │   │   ├── BlogPost.tsx
+│   │   │   ├── RelatedPosts.tsx
+│   │   │   └── CommentSection.tsx
+│   │   ├── games/
+│   │   │   ├── quiz/
+│   │   │   │   ├── QuizCard.tsx
+│   │   │   │   ├── QuizQuestion.tsx
+│   │   │   │   ├── QuizProgress.tsx
+│   │   │   │   └── ResultsDisplay.tsx
+│   │   │   ├── zodiac/
+│   │   │   │   ├── ZodiacWheel.tsx
+│   │   │   │   ├── DartAnimation.tsx
+│   │   │   │   ├── ZodiacMatch.tsx
+│   │   │   │   └── ZodiacInfo.tsx
+│   │   │   └── dating/
+│   │   │       ├── DateForm.tsx
+│   │   │       ├── TwitterConnect.tsx
+│   │   │       ├── MatchCard.tsx
+│   │   │       └── CompatibilityChart.tsx
+│   │   └── profile/
+│   │       ├── UserProfile.tsx
+│   │       ├── SavedResults.tsx
+│   │       └── UserSettings.tsx
+│   ├── lib/
+│   │   ├── db.ts
+│   │   ├── auth.ts
+│   │   ├── api.ts
+│   │   ├── utils.ts
+│   │   ├── quiz-engine.ts
+│   │   ├── zodiac-calculator.ts
+│   │   └── dating-algorithm.ts
+│   ├── hooks/
+│   │   ├── useAuth.ts
+│   │   ├── useQuiz.ts
+│   │   ├── useZodiac.ts
+│   │   └── useDatingMatch.ts
+│   ├── context/
+│   │   ├── AuthContext.tsx
+│   │   ├── ThemeContext.tsx
+│   │   └── UserContext.tsx
+│   ├── types/
+│   │   ├── index.ts
+│   │   ├── quiz.ts
+│   │   ├── zodiac.ts
+│   │   ├── dating.ts
+│   │   └── user.ts
+│   └── data/
+│       ├── quizzes/
+│       │   ├── personality-types.ts
+│       │   ├── enneagram.ts
+│       │   └── attachment-styles.ts
+│       ├── zodiac/
+│       │   ├── signs.ts
+│       │   └── compatibility.ts
+│       └── blog/
+│           └── posts.ts
+├── prisma/
+│   └── schema.prisma
+└── scripts/
+    ├── seed.ts
+    └── generate-sitemap.ts
+```
